@@ -1,4 +1,4 @@
-name: AoC 2021
+name: AoC 2021 Tests
 on:
   push:
     branches:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    name: Test AoC 2021
+    name: Execute Tests
     runs-on: ubuntu-latest
     steps:
       - name: Install SWI-Prolog
@@ -17,4 +17,4 @@ jobs:
       - name: Checkout AoC
         uses: actions/checkout@v1
       - name: Run tests for all days
-        run: cd 2021 && ./testAll.sh
+        run: ./testAll.sh

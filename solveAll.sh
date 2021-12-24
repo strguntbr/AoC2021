@@ -28,7 +28,7 @@ function printPuzzle {
 
 function listPuzzles {
   if [ -z "$1" ]; then
-    ls $1*.prolog | grep -v debug | grep -v common | grep -v \'
+    ls *.prolog | grep -v debug | grep -v common | grep -v \'
   else
     ls $1*.prolog | grep -v debug | grep -v common
   fi

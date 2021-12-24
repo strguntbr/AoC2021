@@ -1,5 +1,7 @@
 #!/bin/bash
 
+OK=0
+
 function displaytime {
   local T=$(($1/1000))
   local H=$((T/60/60))
@@ -16,7 +18,7 @@ function printPuzzle {
   puzzle=$1
   printf "%12s: " $puzzle
   startTime=$(date +%s%0N)
-  prolog -q -l $puzzle -t "verifyTests"
+  prolog -q -l $puzzle -t "verifyTests" || OK=1
   endTime=$(date +%s%0N)
   duration=$(( ($endTime-$startTime)/1000000 ))
   echo " ($(displaytime $duration))"  
@@ -33,3 +35,5 @@ function listPuzzles {
 for puzzle in $(listPuzzles "$1" | sort -V); do
   printPuzzle $puzzle
 done
+
+exit $OK

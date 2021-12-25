@@ -1,6 +1,7 @@
 :- include('lib/solve.prolog'). day(23).
 
-result(Rooms, MinimumEnergy) :-
+result(Input, MinimumEnergy) :-
+  include([L]>>(length(L, C), C>0), Input, Rooms),
   initRooms(Rooms, A, B, C, D),
   setCurMinimum(1000000000), StartingBurrow = burrow{rA: A, rB: B, rC: C, rD: D, h1: [], h2: [], h3: [], h4: [], h5: [], h6: [], h7: []},
   aggregate_all(min(Energy), play(StartingBurrow, 0, Energy), MinimumEnergy).
@@ -181,4 +182,14 @@ energy_out('C', OthersInRoom, Steps, Energy) :- !, length(OthersInRoom, C), room
 energy_out('D', OthersInRoom, Steps, Energy) :- !, length(OthersInRoom, C), roomSize(Size), Energy is 1000*(Steps + Size-1 - C).
 
 /* required for loadData */
-data_line(Amphipods, Line) :- string_chars(Line, Amphipods).
+/*data_line(Amphipods, Line) :- string_chars(Line, Amphipods).*/
+data_line([], "#############").
+data_line([], "#...........#").
+data_line([], "  #########").
+data_line(Amphipods, Line) :-
+  (string_concat("###", T, Line), string_concat(D, "###", T) ; string_concat("  #", T, Line), string_concat(D, "#", T)),
+  split_string(D, '#', '', AmphipodsStr),
+  maplist([A,B]>>string_chars(A,[B]), AmphipodsStr, Amphipods).
+  
+  
+  

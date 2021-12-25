@@ -53,7 +53,12 @@ testResult_(File, ExpectedResult) :- p_testResult(Extension, ExpectedResult), p_
 findTests(Tests) :- findall([File, ExpectedResult], testResult_(File, ExpectedResult), Tests).
 
 verifyTests :- current_predicate(skipTest/0), !, testSkipped(Status), format('[~w] ', [Status]).
-verifyTests :- p_initDynamicTests, forall(testResult_(FILE, ExpectedResult), verifyTest(FILE, ExpectedResult)), testPassed(Status), format('[~w] ', [Status]).
+verifyTests :- p_initDynamicTests,
+  (
+    not(testResult_(_, _)) -> noTests(Status)
+    ; forall(testResult_(FILE, ExpectedResult), verifyTest(FILE, ExpectedResult)), testPassed(Status)
+  ), 
+  format('[~w] ', [Status]).
 
 verifyTest(File, ExpectedResult) :- getTestData(File, TestData), executeTest(File, TestData, ExpectedResult).
 getTestData(File, TestData) :- loadData(TestData, File, Error), !, checkTestLoadError(Error).
@@ -65,9 +70,10 @@ executeTest(File, _, _) :- testFailed(Status), format('[~w] No solution for test
 verifyResult(_, TestResult, TestResult) :- !.
 verifyResult(File, WrongResult, ExpectedResult) :- testFailed(Status), format("[~w] Test ~w returned ~w instead of ~w", [Status, File, WrongResult, ExpectedResult]), halt(4).
 
-testPassed(Text) :- green('TEST  PASSED', Text).
-testFailed(Text) :- red('TEST  FAILED', Text).
-testSkipped(Text) :- yellow('TEST SKIPPED', Text).
+noTests(Text) :-    green('NO TESTS FOUND', Text).
+testPassed(Text) :- green(' TEST  PASSED ', Text).
+testFailed(Text) :- red(' TEST  FAILED ', Text).
+testSkipped(Text) :- yellow(' TEST SKIPPED ', Text).
 
 /* ANSI XTERM utlitly methods */
 green(Text, ColoredText) :- isAnsiXterm, !, format(atom(ColoredText), '\033[0;32m~w\033[0m', [Text]).
